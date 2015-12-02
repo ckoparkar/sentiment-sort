@@ -3,4 +3,6 @@
   :url "http://github.com/cskksc/sentiment-sort"
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :dependencies [[org.clojure/clojure "1.7.0"]])
+  :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/tools.cli "0.3.3"]]
+  :main sentiment-sort.core)
