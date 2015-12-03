@@ -4,5 +4,6 @@
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/tools.cli "0.3.3"]]
+                 [org.clojure/tools.cli "0.3.3"]
+                 [org.clojure/data.csv "0.1.3"]]
   :main sentiment-sort.core)
