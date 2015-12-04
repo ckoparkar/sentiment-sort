@@ -49,7 +49,7 @@
     :default '("-1" "-2" "-3" "-4" "-5")
     :parse-fn #(clojure.string/split % #" ")]
 
-   ["-csv" "--csv PATH" "Path of csv file"
+   ["-csv-in" "--csv-in PATH" "Path of csv file"
     :id :csv-file]])
 
 ;; TODO(cskksc): avoid extra map. get everything done in cli-options.
