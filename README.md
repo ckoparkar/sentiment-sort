@@ -12,3 +12,38 @@ Design an efficient program that picks the first N among a sorted array of numbe
 -csv, --csv PATH : Sentiment sort a csv file. Treat each line as n,xs pair.
 				   Outputs results to out.csv file
 ```
+
+Examples:
+
+1.
+
+	$ java -jar target/sentiment-sort-0.1.0-standalone.jar --csv-in ../input.csv
+	$ cat out.csv
+
+2.
+
+	$ java -jar target/sentiment-sort-0.1.0-standalone.jar -n 5 -a "1 2 3 4 5"
+
+### Go
+
+```
+% go-sentiment -h
+Usage of go-sentiment:
+  -a value
+		comma seperated ints to sort
+  -csv-in FILE
+		Sorts each line of FILE.
+  -n N
+		Take N after sorting. (default 10)
+```
+
+Examples:
+
+1.
+
+	$ go-sentiment -csv-in ../input.csv
+	$ cat out.csv
+
+2.
+
+	$ go-sentiment -n 2 -a 1,2,3,4,5
