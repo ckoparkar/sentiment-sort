@@ -17,17 +17,17 @@ Examples:
 
 1.
 
-	$ java -jar target/sentiment-sort-0.1.0-standalone.jar --csv-in ../input.csv
+	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar --csv-in ../input.csv
 	$ cat out.csv
 
 2.
 
-	$ java -jar target/sentiment-sort-0.1.0-standalone.jar -n 5 -a "1 2 3 4 5"
+	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar -n 5 -a "1 2 3 4 5"
 
 ### Go
 
 ```
-% go-sentiment -h
+% bin/go-sentiment-osx -h
 Usage of go-sentiment:
   -a value
 		comma seperated ints to sort
@@ -41,9 +41,9 @@ Examples:
 
 1.
 
-	$ go-sentiment -csv-in ../input.csv
+	$ bin/go-sentiment-osx -csv-in ../input.csv
 	$ cat out.csv
 
 2.
 
-	$ go-sentiment -n 2 -a 1,2,3,4,5
+	$ bin/go-sentiment-osx -n 2 -a 1,2,3,4,5
