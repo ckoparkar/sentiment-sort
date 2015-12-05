@@ -21,11 +21,23 @@
    (take n (s-sort xs))))
 
 (defn read-csv
+  "Return contents of csv file into a vector."
   [path]
   (with-open [in-file (io/reader path)]
     (doall (csv/read-csv in-file))))
 
 (defn parse-csv
+  "Parses csv file into array of maps.
+  Example:
+
+  in => file path
+
+  file contents =>
+  2,\"-1,-2,-3,-5,-4\"
+  3,\"-3,-5,-4\"
+
+  out => [{:take 2, :numbers (-1 -2 -3 -5 -4)}
+  ,       {:take 3, :numbers (-3 -5 -4)}]"
   [path]
   (for [line (read-csv path)
         :let [toTake (Integer. (first line))
@@ -34,6 +46,12 @@
     {:take toTake :numbers numbers}))
 
 (defn s-sort-csv
+  "Sort csv maps.
+  Example:
+
+  in  => [{:take 2 :numbers '(3 4 5)} {:take 3 :numbers '(1 2 3)}]
+  out => ([2 '(3 4 5) '(5 4)]
+  ,       [3 '(1 2 3) '(3 2 1)])"
   [csv-map]
   (for [line csv-map
         :let [toTake (:take line)
@@ -63,10 +81,10 @@
 
 (defn usage [options-summary]
   (str/join "\n"
-   ["Usage: sentiment-sort [options]"
-    ""
-    "Options:"
-    options-summary]))
+            ["Usage: sentiment-sort [options]"
+             ""
+             "Options:"
+             options-summary]))
 
 ;; TODO(cskksc): avoid extra map. get everything done in cli-options.
 (defn -main
