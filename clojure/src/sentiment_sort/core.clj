@@ -20,35 +20,37 @@
   ([n xs]
    (take n (s-sort xs))))
 
+(defn read-csv
+  [path]
+  (with-open [in-file (io/reader path)]
+    (doall (csv/read-csv in-file))))
+
 (defn parse-csv
   [path]
-  (loop [[line & lines] (with-open [in-file (io/reader path)]
-                          (doall (csv/read-csv in-file)))
-         acc []]
-    (if (nil? line)
-      acc
-      (recur lines
-             (conj acc {:n (Integer/parseInt (first line))
-                        :xs (map #(Integer/parseInt %) (str/split (first (rest line)) #",") )}
-                   )))))
+  (for [line (read-csv path)
+        :let [toTake (Integer. (first line))
+              strs (str/split (second line) #",")
+              numbers (map #(Integer. %) strs)]]
+    {:take toTake :numbers numbers}))
 
 (defn s-sort-csv
-  ([xs] (s-sort-csv xs []))
-  ([[x & xs] acc]
-   (if (nil? x)
-     acc
-     (s-sort-csv xs (conj acc [(:n x) (:xs x) (s-sort (:n x) (:xs x))])))))
+  [csv-map]
+  (for [line csv-map
+        :let [toTake (:take line)
+              numbers (:numbers line)
+              sorted (s-sort toTake numbers)]]
+    [toTake numbers sorted]))
 
 (def cli-options
-  [["-n" "--number N" "Take n from sorted array"
-    :id :n
+  [["-n" "--take N" "Take n from sorted array"
+    :id :take
     :default 10
-    :parse-fn #(Integer/parseInt %)]
+    :parse-fn #(Integer. %)]
 
-   ["-a" "--array xs" "Array of numbers to sort"
-    :id :xs
+   ["-nums" "--numbers xs" "Array of numbers to sort"
+    :id :numbers
     :default '("-1" "-2" "-3" "-4" "-5")
-    :parse-fn #(str/split % #" ")]
+    :parse-fn #(str/split % #",")]
 
    ["-csv-in" "--csv-in PATH" "Path of csv file"
     :id :csv-file]
@@ -70,10 +72,11 @@
 (defn -main
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        n (:n options)
-        xs (:xs options)
+        toTake (:take options)
+        numbers (:numbers options)
         csv-file (:csv-file options)]
     (cond
       (:help options) (exit 0 (usage summary))
       csv-file (spit "out.csv" (str/join "\n" (s-sort-csv (parse-csv csv-file))))
-      :else (println "Running for n:" n ",xs:" xs "\n =" (s-sort n (map #(Integer/parseInt %) xs))))))
+      :else (println "Running for take:" toTake ",numbers:" numbers "\n ="
+                     (s-sort toTake (map #(Integer. %) numbers))))))

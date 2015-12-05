@@ -5,12 +5,13 @@ Design an efficient program that picks the first N among a sorted array of numbe
 ### Clojure
 
 ```
-% lein run -h
+Usage: sentiment-sort [options]
 
--n,   --number N : Take n from sorted array
--a,   --array xs : Array of numbers to sort
--csv, --csv PATH : Sentiment sort a csv file. Treat each line as n,xs pair.
-				   Outputs results to out.csv file
+Options:
+  -n, --take N            10                          Take n from sorted array
+  -nums, --numbers xs     ("-1" "-2" "-3" "-4" "-5")  Array of numbers to sort
+  -csv-in, --csv-in PATH                              Path of csv file
+  -h, --help
 ```
 
 Examples:
@@ -27,7 +28,7 @@ Running time:
 
 2.
 
-	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar -n 5 -a "1 2 3 4 5"
+	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar --take 5 --numbers 1,2,3,4,5
 
 ### Go
 
