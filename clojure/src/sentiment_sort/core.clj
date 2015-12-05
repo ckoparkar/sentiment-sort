@@ -1,7 +1,8 @@
 (ns sentiment-sort.core
   (:require [clojure.tools.cli :refer [parse-opts]]
             [clojure.data.csv :as csv]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [clojure.string :as str])
   (:gen-class))
 
 (defn abs
@@ -28,7 +29,7 @@
       acc
       (recur lines
              (conj acc {:n (Integer/parseInt (first line))
-                        :xs (map #(Integer/parseInt %) (clojure.string/split (first (rest line)) #",") )}
+                        :xs (map #(Integer/parseInt %) (str/split (first (rest line)) #",") )}
                    )))))
 
 (defn s-sort-csv
@@ -47,19 +48,32 @@
    ["-a" "--array xs" "Array of numbers to sort"
     :id :xs
     :default '("-1" "-2" "-3" "-4" "-5")
-    :parse-fn #(clojure.string/split % #" ")]
+    :parse-fn #(str/split % #" ")]
 
    ["-csv-in" "--csv-in PATH" "Path of csv file"
-    :id :csv-file]])
+    :id :csv-file]
+
+   ["-h" "--help"]])
+
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
+(defn usage [options-summary]
+  (str/join "\n"
+   ["Usage: sentiment-sort [options]"
+    ""
+    "Options:"
+    options-summary]))
 
 ;; TODO(cskksc): avoid extra map. get everything done in cli-options.
 (defn -main
   [& args]
-  (let [opts (parse-opts args cli-options)
-        n (get-in opts [:options :n])
-        xs (get-in opts [:options :xs])
-        csv-file (get-in opts [:options :csv-file])]
-    (if csv-file
-      (spit "out.csv" (clojure.string/join "\n" (s-sort-csv (parse-csv csv-file))))
-      (println (s-sort n (map #(Integer/parseInt %) xs)))
-      )))
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+        n (:n options)
+        xs (:xs options)
+        csv-file (:csv-file options)]
+    (cond
+      (:help options) (exit 0 (usage summary))
+      csv-file (spit "out.csv" (str/join "\n" (s-sort-csv (parse-csv csv-file))))
+      :else (println "Running for n:" n ",xs:" xs "\n =" (s-sort n (map #(Integer/parseInt %) xs))))))
