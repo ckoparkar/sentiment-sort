@@ -20,6 +20,11 @@ Examples:
 	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar --csv-in ../input.csv
 	$ cat out.csv
 
+
+Running time:
+
+```2.63s user 0.10s system 217% cpu 1.252 total```
+
 2.
 
 	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar -n 5 -a "1 2 3 4 5"
@@ -43,6 +48,10 @@ Examples:
 
 	$ bin/go-sentiment-osx -csv-in ../input.csv
 	$ cat out.csv
+
+Running time:
+
+```0.00s user 0.00s system 86% cpu 0.009 total```
 
 2.
 
