@@ -73,11 +73,54 @@ func sentimentSort(xs []int) []int {
 	return xs
 }
 
-func init() {
-	flag.Var(&intsFlag, "a", "comma seperated ints to sort")
+func readCSV(path string) ([][]string, error) {
+	f, err := os.Open(*csvInput)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	csvReader := csv.NewReader(f)
+	rows, err := csvReader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+	return rows, nil
+}
+
+func writeCSV(content [][]string) {
+	// init csv writer
+	var csvWriter *csv.Writer
+	of, err := os.Create("out.csv")
+	defer of.Close()
+	if err != nil {
+		log.Printf("Couldn't open file, %#v. Writing to Stdout", err)
+		csvWriter = csv.NewWriter(os.Stdout)
+	}
+	csvWriter = csv.NewWriter(of)
+	for _, row := range content {
+		csvWriter.Write(row)
+	}
+	csvWriter.Flush()
+}
+
+func processCSV(path string) error {
+	rows, err := readCSV(*csvInput)
+	if err != nil {
+		return err
+	}
+	for _, row := range rows {
+		toTake, _ := strconv.Atoi(row[0])
+		strs := strings.Split(row[1], ",")
+		sorted := sentimentSort(toInts(strs))
+		is := intArray(sorted[0:toTake])
+		row = append(row, is.String())
+	}
+	writeCSV(rows)
+	return nil
 }
 
 func main() {
+	flag.Var(&intsFlag, "a", "comma seperated ints to sort")
 	flag.Parse()
 	if len(intsFlag) != 0 {
 		if *n > len(intsFlag) {
@@ -87,37 +130,6 @@ func main() {
 		fmt.Println(sorted[0:*n])
 	}
 	if *csvInput != "" {
-		// init csv reader
-		f, err := os.Open(*csvInput)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer f.Close()
-		csvReader := csv.NewReader(f)
-
-		// init csv writer
-		var csvWriter *csv.Writer
-		of, err := os.Create("out.csv")
-		defer of.Close()
-		if err != nil {
-			log.Printf("Couldn't open file, %#v. Writing to Stdout", err)
-			csvWriter = csv.NewWriter(os.Stdout)
-		}
-		csvWriter = csv.NewWriter(of)
-
-		// process each line
-		rows, err := csvReader.ReadAll()
-		if err != nil {
-			log.Fatal(err)
-		}
-		for _, row := range rows {
-			toTake, _ := strconv.Atoi(row[0])
-			strs := strings.Split(row[1], ",")
-			sorted := sentimentSort(toInts(strs))
-			is := intArray(sorted[0:toTake])
-			row = append(row, is.String())
-			csvWriter.Write(row)
-		}
-		csvWriter.Flush()
+		processCSV(*csvInput)
 	}
 }
