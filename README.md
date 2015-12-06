@@ -36,11 +36,13 @@ Running time:
 ```
 % bin/go-sentiment-osx -h
 Usage of go-sentiment:
-  -a value
-		comma seperated ints to sort
   -csv-in FILE
 		Sorts each line of FILE.
-  -n N
+  -numbers value
+		comma seperated ints to sort
+  -prefer string
+		If blank, maintain initial order. If + or -, give it higher preference.
+  -take N
 		Take N after sorting. (default 10)
 ```
 

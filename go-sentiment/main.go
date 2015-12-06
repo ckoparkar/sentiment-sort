@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	csvInput = flag.String("csv-in", "", "Sorts each line of `FILE`.")
-
-	n = flag.Int("n", 10, "Take `N` after sorting.")
+	csvInput       = flag.String("csv-in", "", "Sorts each line of `FILE`.")
+	toTakeFlag     = flag.Int("take", 10, "Take `N` after sorting.")
+	sortPreference = flag.String("prefer", "", "If blank, maintain initial order. If + or -, give it higher preference.")
 
 	intsFlag intArray
 )
@@ -31,7 +31,19 @@ func (a intArray) Swap(i, j int) {
 }
 
 func (a intArray) Less(i, j int) bool {
-	return math.Abs(float64(a[i])) > math.Abs(float64(a[j]))
+	x := math.Abs(float64(a[i]))
+	y := math.Abs(float64(a[j]))
+
+	// abs(n) are not equal or we dont care about +ve/-ve
+	if x != y || *sortPreference == "" {
+		return x > y
+	}
+	// -ve first
+	if *sortPreference == "-" {
+		return a[i] < a[j]
+	}
+	// +ve first
+	return a[i] > a[j]
 }
 
 // String converts [1,2,3] to "1,2,3"
@@ -108,26 +120,28 @@ func processCSV(path string) error {
 	if err != nil {
 		return err
 	}
+	content := make([][]string, 0)
 	for _, row := range rows {
 		toTake, _ := strconv.Atoi(row[0])
 		strs := strings.Split(row[1], ",")
 		sorted := sentimentSort(toInts(strs))
 		is := intArray(sorted[0:toTake])
 		row = append(row, is.String())
+		content = append(content, row)
 	}
-	writeCSV(rows)
+	writeCSV(content)
 	return nil
 }
 
 func main() {
-	flag.Var(&intsFlag, "a", "comma seperated ints to sort")
+	flag.Var(&intsFlag, "numbers", "comma seperated ints to sort")
 	flag.Parse()
 	if len(intsFlag) != 0 {
-		if *n > len(intsFlag) {
-			*n = len(intsFlag)
+		if *toTakeFlag > len(intsFlag) {
+			*toTakeFlag = len(intsFlag)
 		}
 		sorted := sentimentSort(intsFlag)
-		fmt.Println(sorted[0:*n])
+		fmt.Println(sorted[0:*toTakeFlag])
 	}
 	if *csvInput != "" {
 		processCSV(*csvInput)
