@@ -12,13 +12,40 @@
     (- n)
     n))
 
+(defn generate-sort-fn
+  "Take a sort preference, (+ve, -ve, none) and returns a sort fn"
+  [preference]
+  (fn [x y]
+    (let [a (abs x) b (abs y)]
+      (cond
+        (or (not= a b) (str/blank? preference)) (> a b)
+        (= preference "+") (> x y)
+        :else (< x y)
+        ))))
+
 ;; real meat of the whole thing
 (defn s-sort
   "Sorts xs based on sentiment"
   ([xs]
-   (sort-by abs > xs))
-  ([n xs]
-   (take n (s-sort xs))))
+   (sort (generate-sort-fn "") xs))
+  ([xs preference]
+   (sort (generate-sort-fn preference) xs))
+  ([n xs preference]
+   (take n (s-sort xs preference))))
+
+(defn s-sort-csv
+  "Sort csv maps.
+  Example:
+
+  in  => [{:take 2 :numbers '(3 4 5)} {:take 3 :numbers '(1 2 3)}]
+  out => ([2 '(3 4 5) '(5 4)]
+  ,       [3 '(1 2 3) '(3 2 1)])"
+  [preference csv-map]
+  (for [line csv-map
+        :let [to-take (:take line)
+              numbers (:numbers line)
+              sorted (s-sort to-take numbers preference)]]
+    [to-take numbers sorted]))
 
 (defn read-csv
   "Return contents of csv file into a vector."
@@ -40,27 +67,13 @@
   ,       {:take 3, :numbers (-3 -5 -4)}]"
   [path]
   (for [line (read-csv path)
-        :let [toTake (Integer. (first line))
+        :let [to-take (Integer. (first line))
               strs (str/split (second line) #",")
               numbers (map #(Integer. %) strs)]]
-    {:take toTake :numbers numbers}))
-
-(defn s-sort-csv
-  "Sort csv maps.
-  Example:
-
-  in  => [{:take 2 :numbers '(3 4 5)} {:take 3 :numbers '(1 2 3)}]
-  out => ([2 '(3 4 5) '(5 4)]
-  ,       [3 '(1 2 3) '(3 2 1)])"
-  [csv-map]
-  (for [line csv-map
-        :let [toTake (:take line)
-              numbers (:numbers line)
-              sorted (s-sort toTake numbers)]]
-    [toTake numbers sorted]))
+    {:take to-take :numbers numbers}))
 
 (def cli-options
-  [["-n" "--take N" "Take n from sorted array"
+  [["-n" "--take N" "Take N after sorting."
     :id :take
     :default 10
     :parse-fn #(Integer. %)]
@@ -72,6 +85,10 @@
 
    ["-csv-in" "--csv-in PATH" "Path of csv file"
     :id :csv-file]
+
+   ["-pref" "--prefer x" "If blank, maintain initial order. If + or -, give it higher preference."
+    :id :sort-preference
+    :default ""]
 
    ["-h" "--help"]])
 
@@ -90,11 +107,12 @@
 (defn -main
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        toTake (:take options)
+        to-take (:take options)
         numbers (:numbers options)
-        csv-file (:csv-file options)]
+        csv-file (:csv-file options)
+        preference (:sort-preference options)]
     (cond
       (:help options) (exit 0 (usage summary))
-      csv-file (spit "out.csv" (str/join "\n" (s-sort-csv (parse-csv csv-file))))
-      :else (println "Running for take:" toTake ",numbers:" numbers "\n ="
-                     (s-sort toTake (map #(Integer. %) numbers))))))
+      csv-file (spit "out.csv" (str/join "\n" (s-sort-csv preference (parse-csv csv-file))))
+      :else (println "Running for take:" to-take ",numbers:" numbers "\n ="
+                     (s-sort to-take (map #(Integer. %) numbers) preference)))))

@@ -9,9 +9,10 @@ A program that picks the first N among a sorted array of numbers representing cu
 Usage: sentiment-sort [options]
 
 Options:
-  -n, --take N            10                          Take n from sorted array
+  -n, --take N            10                          Take N after sorting.
   -nums, --numbers xs     ("-1" "-2" "-3" "-4" "-5")  Array of numbers to sort
   -csv-in, --csv-in PATH                              Path of csv file
+  -pref, --prefer x                                   If blank, maintain initial order. If + or -, give it higher preference.
   -h, --help
 ```
 
