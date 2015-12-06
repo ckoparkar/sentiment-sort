@@ -20,7 +20,7 @@ Examples:
 
 1.
 
-	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar --csv-in ../input.csv
+	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar --csv-in input.csv
 	$ cat out.csv
 
 
@@ -31,6 +31,11 @@ Running time:
 2.
 
 	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar --take 5 --numbers 1,2,3,4,5
+
+3.
+
+	$ java -jar bin/sentiment-sort-0.1.0-standalone.jar --take 5 --numbers 3,-4,-1,2,4,-5,-3 --prefer +
+
 
 ### Go
 
@@ -51,7 +56,7 @@ Examples:
 
 1.
 
-	$ bin/go-sentiment-osx -csv-in ../input.csv
+	$ bin/go-sentiment-osx -csv-in input.csv
 	$ cat out.csv
 
 Running time:
@@ -60,4 +65,8 @@ Running time:
 
 2.
 
-	$ bin/go-sentiment-osx -n 2 -a 1,2,3,4,5
+	$ bin/go-sentiment-osx -take 2 -numbers 1,2,3,4,5
+
+3.
+
+	$ bin/go-sentiment-osx -numbers 3,-4,-1,2,4,-5,-3 -prefer +
