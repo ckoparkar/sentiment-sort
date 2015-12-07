@@ -5,18 +5,11 @@
             [clojure.string :as str])
   (:gen-class))
 
-(defn abs
-  "(abs n) is the absolute value of n"
-  [n]
-  (if (neg? n)
-    (- n)
-    n))
-
 (defn generate-sort-fn
   "Take a sort preference, (+ve, -ve, none) and returns a sort fn"
   [preference]
   (fn [x y]
-    (let [a (abs x) b (abs y)]
+    (let [a (Math/abs x) b (Math/abs y)]
       (cond
         (or (not= a b) (str/blank? preference)) (> a b)
         (= preference "+") (> x y)
