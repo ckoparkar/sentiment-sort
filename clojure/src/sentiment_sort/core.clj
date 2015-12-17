@@ -50,18 +50,20 @@
   "Parses csv file into array of maps.
   Example:
 
-  in => file path
-
-  file contents =>
+  in => array of csv lines
   2,\"-1,-2,-3,-5,-4\"
   3,\"-3,-5,-4\"
-
+  4,\"-1,\n\n-2\n,-3\n\n,\n-4\n\n,-5,-6\"
   out => [{:take 2, :numbers (-1 -2 -3 -5 -4)}
-  ,       {:take 3, :numbers (-3 -5 -4)}]"
-  [path]
-  (for [line (read-csv path)
+  ,       {:take 3, :numbers (-3 -5 -4)}
+  ,       {:take 2, :numbers (-6 -5 -4 -3 -2 -1)}]"
+  [lines]
+  (for [line lines
         :let [to-take (Integer. (first line))
-              strs (str/split (second line) #",")
+              strs (-> line
+                      second
+                      (str/replace "\n" "")
+                      (str/split #","))
               numbers (map #(Integer. %) strs)]]
     {:take to-take :numbers numbers}))
 
@@ -106,6 +108,6 @@
         preference (:sort-preference options)]
     (cond
       (:help options) (exit 0 (usage summary))
-      csv-file (spit "out.csv" (str/join "\n" (s-sort-csv preference (parse-csv csv-file))))
+      csv-file (spit "out.csv" (str/join "\n" (s-sort-csv preference (parse-csv (read-csv csv-file)))))
       :else (println "Running for take:" to-take ",numbers:" numbers "\n ="
                      (s-sort to-take (map #(Integer. %) numbers) preference)))))
