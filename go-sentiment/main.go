@@ -116,14 +116,15 @@ func writeCSV(content [][]string) {
 }
 
 func processCSV(path string) error {
-	rows, err := readCSV(*csvInput)
+	rows, err := readCSV(path)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 	content := make([][]string, 0)
 	for _, row := range rows {
 		toTake, _ := strconv.Atoi(row[0])
-		strs := strings.Split(row[1], ",")
+		trimmed := strings.Replace(row[1], "\n", "", -1)
+		strs := strings.Split(trimmed, ",")
 		sorted := sentimentSort(toInts(strs))
 		is := intArray(sorted[0:toTake])
 		row = append(row, is.String())
