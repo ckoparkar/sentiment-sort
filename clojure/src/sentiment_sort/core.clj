@@ -108,6 +108,10 @@
         preference (:sort-preference options)]
     (cond
       (:help options) (exit 0 (usage summary))
-      csv-file (spit "out.csv" (str/join "\n" (s-sort-csv preference (parse-csv (read-csv csv-file)))))
+      csv-file (->> (read-csv csv-file)
+                  parse-csv
+                  (s-sort-csv preference)
+                  (str/join "\n")
+                  (spit "out.csv"))
       :else (println "Running for take:" to-take ",numbers:" numbers "\n ="
                      (s-sort to-take (map #(Integer. %) numbers) preference)))))
