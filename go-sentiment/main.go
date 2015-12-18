@@ -122,9 +122,10 @@ func processCSV(path string) error {
 	}
 	content := make([][]string, 0)
 	for _, row := range rows {
-		toTake, _ := strconv.Atoi(row[0])
-		trimmed := strings.Replace(row[1], "\n", "", -1)
-		strs := strings.Split(trimmed, ",")
+		trimmedToTake := strings.Replace(row[0], "\n", "", -1)
+		toTake, _ := strconv.Atoi(trimmedToTake)
+		trimmedStrs := strings.Replace(row[1], "\n", "", -1)
+		strs := strings.Split(trimmedStrs, ",")
 		sorted := sentimentSort(toInts(strs))
 		is := intArray(sorted[0:toTake])
 		row = append(row, is.String())
