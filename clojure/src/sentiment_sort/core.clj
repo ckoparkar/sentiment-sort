@@ -59,7 +59,9 @@
   ,       {:take 2, :numbers (-6 -5 -4 -3 -2 -1)}]"
   [lines]
   (for [line lines
-        :let [to-take (Integer. (first line))
+        :let [to-take (-> (first line)
+                         (str/replace "\n" "")
+                         Integer.)
               strs (-> line
                       second
                       (str/replace "\n" "")

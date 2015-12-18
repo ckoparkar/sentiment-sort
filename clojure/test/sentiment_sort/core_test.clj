@@ -23,7 +23,7 @@
 (deftest parse-csv-test
   (testing "parse-csv"
     (is (= (parse-csv '(["2" "-1,-2,-3,-5,-4"]
-                        ["3" "-3,-5,-4"]
+                        ["\n\n3\n\n" "-3,-5,-4"]
                         ["4" "-1,\n\n-2\n,-3\n\n,\n-4\n\n,-5,-6"]))
            [{:take 2 :numbers [-1 -2 -3 -5 -4]}
             {:take 3 :numbers [-3 -5 -4]}
