@@ -62,8 +62,7 @@
         :let [to-take (-> (first line)
                          (str/replace "\n" "")
                          Integer.)
-              strs (-> line
-                      second
+              strs (-> (second line)
                       (str/replace "\n" "")
                       (str/split #","))
               numbers (map #(Integer. %) strs)]]
