@@ -28,3 +28,10 @@
            [{:take 2 :numbers [-1 -2 -3 -5 -4]}
             {:take 3 :numbers [-3 -5 -4]}
             {:take 4 :numbers [-1 -2 -3 -4 -5 -6]}]))))
+
+
+(deftest s-sort-csv-test
+  (testing "s-sort-csv"
+    (is (= (s-sort-csv "" [{:take 2 :numbers [-1 -2 -3 -5 -4]}])
+           '([2 [-1 -2 -3 -5 -4] [-5 -4]])
+           ))))

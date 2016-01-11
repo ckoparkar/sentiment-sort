@@ -34,11 +34,9 @@
   out => ([2 '(3 4 5) '(5 4)]
   ,       [3 '(1 2 3) '(3 2 1)])"
   [preference csv-map]
-  (for [line csv-map
-        :let [to-take (:take line)
-              numbers (:numbers line)
-              sorted (s-sort to-take numbers preference)]]
-    [to-take numbers sorted]))
+  (reduce (fn [acc {to-take :take numbers :numbers}]
+            (conj acc [to-take numbers (s-sort to-take numbers preference)]))
+          [] csv-map))
 
 (defn read-csv
   "Return contents of csv file into a vector."
