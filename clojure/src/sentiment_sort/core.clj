@@ -56,15 +56,16 @@
   ,       {:take 3, :numbers (-3 -5 -4)}
   ,       {:take 2, :numbers (-6 -5 -4 -3 -2 -1)}]"
   [lines]
-  (for [line lines
-        :let [to-take (-> (first line)
-                         (str/replace "\n" "")
-                         Integer.)
-              strs (-> (second line)
-                      (str/replace "\n" "")
-                      (str/split #","))
-              numbers (map #(Integer. %) strs)]]
-    {:take to-take :numbers numbers}))
+  (reduce (fn [acc line]
+            (let [to-take (-> (first line)
+                             (str/replace "\n" "")
+                             Integer.)
+                  strs (-> (second line)
+                          (str/replace "\n" "")
+                          (str/split #","))
+                  numbers (map #(Integer. %) strs)]
+              (conj acc {:take to-take :numbers numbers})))
+          [] lines))
 
 (def cli-options
   [["-n" "--take N" "Take N after sorting."
